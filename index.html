@@ -36,6 +36,28 @@ svg text{font-size:11px;fill:var(--mute)}.tblwrap{max-height:560px;overflow:auto
  .resumo li{margin:8px 0}.resumo li a{display:inline-block;padding:4px 0}
  .resumo table{width:100%}
 }
+.chk{flex-direction:row!important;align-items:center;gap:8px!important;font-size:14px!important;color:var(--ink)!important}.chk input{min-width:0!important;width:20px;height:20px}
+.bars{display:flex;flex-direction:column;gap:8px}.bar{display:grid;grid-template-columns:minmax(180px,38%) 1fr;gap:10px;align-items:center;color:var(--ink);text-decoration:none;font-size:13px}
+.bt{display:flex;align-items:center;gap:8px}.bt i{display:block;height:16px;border-radius:4px;background:#2563eb;opacity:.8}.bt b{font-size:13px;white-space:nowrap}
+.bar.me .bt i{background:#e11d48;opacity:1}.bar small{color:var(--mute)}
+td.lk a{display:inline-block;padding:4px 10px;border:1px solid var(--acc);border-radius:6px;text-decoration:none}
+@media (max-width:700px){
+ .bar{grid-template-columns:1fr;gap:3px}
+ .tblwrap{padding:0;background:none;border:0}
+ .tblwrap table,.tblwrap tbody{display:block}
+ .tblwrap tr:first-child{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+ .tblwrap tr:first-child th{position:static;border:1px solid var(--line);border-radius:99px;padding:5px 10px;background:var(--card)}
+ .tblwrap tr:first-child th:last-child{display:none}
+ .tblwrap tr:not(:first-child){display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+ .tblwrap tr.me{border-color:#e11d48;background:#fff1f3}
+ .tblwrap td{display:block;border:0;padding:2px 0;white-space:normal;text-align:left!important;font-size:14px;background:none!important}
+ .tblwrap td::before{content:attr(data-l);display:block;font-size:11px;color:var(--mute)}
+ .tblwrap td:first-child{grid-column:1/-1;font-size:20px;font-weight:700}.tblwrap td:first-child::before{display:none}
+ .tblwrap td.lk{grid-column:1/-1}.tblwrap td.lk::before{display:none}.tblwrap td.lk a{display:block;text-align:center;padding:10px;font-weight:600}
+ .chk{flex:1 1 100%!important}
+}
+tr.more td{text-align:center!important;padding:12px}tr.more button{font:inherit;padding:10px 18px;border-radius:8px;border:1px solid var(--acc);background:var(--card);color:var(--acc);cursor:pointer}
+@media (max-width:700px){.tblwrap tr.more{display:block!important;border:0;background:none;padding:0}.tblwrap tr.more td::before{display:none}.tblwrap tr.more button{width:100%}}
 </style></head><body>
 <header><h1>Painel de imóveis — Canoas</h1><p>Sua casa: Fátima, R. Barão de Mauá 300 · <span id="meuTxt"></span></p></header>
 <nav><button data-t="pais" class="on">0. Resumo (leia primeiro)</button><button data-t="cmp">1. Meu preço vs. Fátima</button><button data-t="busca">2. Novos imóveis (compra/aluguel)</button><button data-t="cond">3. Meu condomínio</button></nav>
@@ -98,7 +120,7 @@ svg text{font-size:11px;fill:var(--mute)}.tblwrap{max-height:560px;overflow:auto
     <label>Vagas mín.<select id="cV"><option value="0">qualquer</option><option>1</option><option>2</option><option selected>3</option></select></label>
     <label>Área mín. (m²)<input id="cA" type="number" value="80"></label>
     <label>Área máx. (m²)<input id="cAx" type="number" value="150"></label>
-    <label><span>&nbsp;</span><span><input type="checkbox" id="cP"> incluir sem preço</span></label>
+    <label class="chk"><input type="checkbox" id="cP"> incluir anúncios sem preço</label>
   </div>
   <div class="card"><svg id="cmpSvg" width="100%" height="340"></svg><p class="note">Cada ponto é um anúncio (área × preço). Vermelho = sua casa. Linha tracejada = seu R$/m² aplicado a cada área.</p></div>
   <div class="card tblwrap"><table id="cmpT"></table></div>
@@ -112,15 +134,15 @@ svg text{font-size:11px;fill:var(--mute)}.tblwrap{max-height:560px;overflow:auto
     <label>Fonte<select id="bF"><option value="">todas</option></select></label>
     <label>Preço máx.<input id="bP" type="number"></label>
     <label>Área mín.<input id="bA" type="number" value="80"></label>
-    <label><span>&nbsp;</span><span><input type="checkbox" id="bS"> esconder sem preço</span></label>
+    <label class="chk"><input type="checkbox" id="bS"> esconder anúncios sem preço</label>
   </div>
-  <div class="card"><svg id="bSvg" width="100%" height="200"></svg><p class="note">Mediana de preço por bairro e tipo, com os filtros acima.</p></div>
+  <div class="card"><div id="bSvg" class="bars"></div><p class="note">Mediana de preço por bairro e tipo, com os filtros acima.</p></div>
   <div class="card tblwrap"><table id="bTab"></table></div>
   <p class="note">O mesmo imóvel pode aparecer em mais de um site.</p>
 </section>
 <section id="cond">
   <div class="kpis" id="mK"></div>
-  <div class="card"><svg id="mSvg" width="100%" height="260"></svg></div>
+  <div class="card"><div id="mSvg" class="bars"></div></div>
   <div class="card tblwrap"><table id="mT"></table></div>
   <p class="note">Condomínio Residencial São José — Rua Barão de Mauá 299/300/301. Lista em condominio-sao-jose.csv: só anúncios com número confirmado no endereço ou na descrição.</p>
 </section>
@@ -134,11 +156,13 @@ const meuM2=MEU.preco/MEU.area;
 $('#meuTxt').textContent=`${R(MEU.preco)} · ${MEU.area} m² · ${MEU.quartos} quartos · ${MEU.vagas} vagas · ${R(meuM2)}/m²`;
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,section').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.t).classList.add('on')});
 
-function table(el,cols,rows,meId){let sk=el._sk||cols[1].k,dir=el._dir||1;
+function table(el,cols,rows,meId){let sk=el._sk||cols[0].k,dir=el._dir||1;
  const draw=()=>{const rs=[...rows].sort((a,b)=>{const x=a[sk],y=b[sk];return (x==null)-(y==null)||(x>y?1:x<y?-1:0)*dir});
   el.innerHTML='<tr>'+cols.map(c=>`<th data-k="${c.k}">${c.h}${c.k==sk?(dir>0?' ▲':' ▼'):''}</th>`).join('')+'</tr>'+
-  rs.map(r=>`<tr class="${r.id===meId?'me':''}">`+cols.map(c=>`<td class="${c.n?'n':''}">${c.f?c.f(r):(r[c.k]??'—')}</td>`).join('')+'</tr>').join('');
+  rs.slice(0,el._lim||60).map(r=>`<tr class="${meId&&r.id===meId?'me':''}">`+cols.map(c=>`<td data-l="${c.h}" class="${c.n?'n':''}${c.k==='url'?' lk':''}">${c.f?c.f(r):(r[c.k]??'—')}</td>`).join('')+'</tr>').join('');
+  if(rs.length>(el._lim||60))el.insertAdjacentHTML('beforeend',`<tr class="more"><td colspan="${cols.length}"><button type="button">Ver mais (${rs.length-(el._lim||60)} restantes)</button></td></tr>`);const mb=el.querySelector('tr.more button');if(mb)mb.onclick=()=>{el._lim=(el._lim||60)+60;draw()};
   el.querySelectorAll('th').forEach(th=>th.onclick=()=>{if(sk===th.dataset.k)dir=-dir;else{sk=th.dataset.k;dir=1}el._sk=sk;el._dir=dir;draw()})};draw()}
+const hbars=(el,it)=>{const mx=Math.max(...it.map(x=>x.v),1),lo=Math.min(...it.map(x=>x.v))*.8;el.innerHTML=it.map(x=>`<a class="bar${x.me?' me':''}" ${x.url?`href="${x.url}" target="_blank"`:''}><span class="bl">${x.l}</span><span class="bt"><i style="width:${Math.max(4,100*(x.v-lo)/(mx-lo))}%"></i><b>${R(x.v)}</b></span></a>`).join('')};
 const link=r=>`<a href="${r.url}" target="_blank" rel="noopener">abrir ↗</a>`,
  diff=r=>{if(!r.preco)return'—';const d=(r.preco-MEU.preco)/MEU.preco*100;return `<span class="${d>0?'up':'down'}">${d>0?'+':''}${d.toFixed(0)}%</span>`};
 
@@ -171,12 +195,10 @@ function busca(){const op=$('#bOp').value,b=$('#bB').value,t=$('#bT').value,f=$(
  const rows=BUSCA.filter(r=>r.op===op&&(!b||r.bairro===b)&&(!t||r.tipo===t)&&(!f||r.fonte===f)&&(!r.preco||r.preco<=p)&&(!r.area||r.area>=a)&&(!hs||r.preco));
  const ps=rows.map(r=>r.preco);
  $('#bK').innerHTML=[[rows.length,'anúncios'],[R(med(ps)),'mediana de preço'],[R(Math.min(...ps.filter(x=>x))),'mais barato'],
-  [op==='Compra'?R(med(rows.map(pm)))+'/m²':'—','mediana R$/m²'],[op==='Compra'?R(MEU.preco-(med(ps)||0)):'—','sua casa − mediana']]
+  [op==='Compra'?R(med(rows.map(pm)))+'/m²':'—','mediana R$/m²'],[op==='Compra'?R(Math.abs(MEU.preco-(med(ps)||0))):'—',op==='Compra'?(MEU.preco>(med(ps)||0)?'nossa casa está ACIMA da mediana':'nossa casa está ABAIXO da mediana'):'']]
   .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
  const g={};rows.forEach(r=>{if(r.preco)(g[r.bairro+' · '+r.tipo]??=[]).push(r.preco)});
- const bars=Object.entries(g).map(([k,v])=>[k,med(v),v.length]).sort((x,y)=>y[1]-x[1]).slice(0,12),svg=$('#bSvg'),W=svg.clientWidth||900,mx=Math.max(...bars.map(x=>x[1]),1),bh=Math.max(12,Math.min(22,190/bars.length-3));
- svg.setAttribute('height',bars.length*(bh+4)+10);
- svg.innerHTML=bars.map(([k,v,n],i)=>`<text x="0" y="${i*(bh+4)+bh-4}">${k} (${n})</text><rect x="230" y="${i*(bh+4)}" height="${bh}" width="${(W-330)*v/mx}" fill="#2563eb" opacity=".75"/><text x="${236+(W-330)*v/mx}" y="${i*(bh+4)+bh-4}">${R(v)}</text>`).join('');
+ hbars($('#bSvg'),Object.entries(g).map(([k,v])=>({l:`${k} <small>(${v.length})</small>`,v:med(v)})).sort((x,y)=>y.v-x.v).slice(0,12));
  table($('#bTab'),[{h:'Preço',k:'preco',n:1,f:r=>R(r.preco)},{h:'Tipo',k:'tipo'},{h:'Bairro',k:'bairro'},{h:'Quartos',k:'quartos',n:1},{h:'Vagas',k:'vagas',n:1},
   {h:'Área',k:'area',n:1},{h:'R$/m²',k:'pm',n:1,f:r=>op==='Compra'?R(r.pm):'—'},{h:'Endereço',k:'end'},{h:'Fonte',k:'fonte',f:r=>`<span class="tag">${r.fonte}</span>`},{h:'Link',k:'url',f:link}],
   rows.map(r=>({...r,pm:pm(r)})))}
@@ -186,9 +208,7 @@ function cond(){const rows=[{id:MEU.id,preco:MEU.preco,area:MEU.area,quartos:MEU
  o=rows.filter(r=>r.id!==MEU.id&&r.preco);
  $('#mK').innerHTML=[[rows.length-1,'outros anúncios na rua'],[R(med(o.map(r=>r.preco))),'mediana de preço'],[R(med(o.map(pm)))+'/m²','mediana R$/m²'],[R(Math.min(...o.map(r=>r.preco))),'mais barato']]
   .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
- const s=rows.filter(r=>r.preco).sort((a,b)=>a.preco-b.preco),svg=$('#mSvg'),W=svg.clientWidth||900,mx=Math.max(...s.map(r=>r.preco));
- svg.setAttribute('height',s.length*26+10);
- svg.innerHTML=s.map((r,i)=>{const me=r.id===MEU.id;return `<a href="${r.url}" target="_blank"><text x="0" y="${i*26+16}">${me?'SUA CASA':(r.area||'?')+' m² · '+(r.quartos||'?')+'q · '+(r.vagas||'?')+'v'}</text><rect x="150" y="${i*26+3}" height="18" width="${(W-260)*r.preco/mx}" fill="${me?'#e11d48':'#2563eb'}" opacity=".8"/><text x="${156+(W-260)*r.preco/mx}" y="${i*26+16}">${R(r.preco)}</text></a>`}).join('');
+ hbars($('#mSvg'),rows.filter(r=>r.preco).sort((a,b)=>a.preco-b.preco).map(r=>({l:r.id===MEU.id?'<b>SUA CASA</b>':[r.area&&r.area+' m²',r.quartos&&r.quartos+' quartos',r.vagas&&r.vagas+' vagas','nº '+((r.rua.match(/\d{3}/)||[''])[0])].filter(Boolean).join(' · '),v:r.preco,me:r.id===MEU.id,url:r.url})));
  table($('#mT'),[{h:'Preço',k:'preco',n:1,f:r=>R(r.preco)},{h:'vs. seu',k:'preco',f:diff},{h:'Área',k:'area',n:1},{h:'R$/m²',k:'pm',n:1,f:r=>R(pm(r))},{h:'Quartos',k:'quartos',n:1},{h:'Vagas',k:'vagas',n:1},{h:'Endereço',k:'rua'},{h:'Sites',k:'imob'},{h:'Status',k:'status'},{h:'Link',k:'url',f:link}],
   rows.map(r=>({...r,pm:pm(r)})),MEU.id)}
 cmp();busca();cond();addEventListener('resize',()=>{cmp();busca();cond()});
